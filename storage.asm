@@ -212,5 +212,3 @@ DOUT		sta	buffer
 ;
 		rts
 	endif
-
-

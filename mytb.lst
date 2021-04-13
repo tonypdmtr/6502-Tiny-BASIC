@@ -15,7 +15,7 @@ AS65 Assembler for R6502 [1.42].                                     Page    1
                         ;
                         ; 10/07/2017
                         ;
-                        ; This implements a stripped down Tiny BASIC 
+                        ; This implements a stripped down Tiny BASIC
                         ; interpreter using the Interpretive Language (IL)
                         ; method as described in the first few issues of
                         ; Dr Dobb's Journal.  The IL interpreter can be used
@@ -227,15 +227,14 @@ ffff =                  SD_ENABLED	equ	TRUE
                         ; Size of the keyboard buffer
                         ;
 0084 =                  BUFFER_SIZE	equ	132
-                        
-                        
+
                         ;
                         		bss
 f000 =                  		org	ROM_START
                         ;
                         ;=====================================================
                         ; Jump table to common functions.  The entries in this
-                        ; table are used by external programs, so nothing can 
+                        ; table are used by external programs, so nothing can
                         ; moved or removed from this table.  New entries alway
                         ; go at the end.  Many of these are internal functions
                         ; and I figured they might be handy for others.
@@ -310,7 +309,7 @@ df08 =                  outputVector	ds	2
                         ; Buffer for GETLINE
                         ;
 df0a =                  buffer		ds	BUFFER_SIZE
-                        
+
                         		code
 0206 : 4c0cf0           OUTCH		jmp	cout
 0209 : 4c09f0           GETCH		jmp	cin
@@ -350,7 +349,7 @@ f012 =                  puts		equ	putsil
 0250 : 4c6302           		jmp	coldtwo
                         ;
                         ; This is the warm start entry point
-                        ;	
+                        ;
 0253 : 202f0b           warm2		jsr	SetOutConsole
 0256 : 200c02           		jsr	CRLF
 0259 : ad710e           		lda	errGoto
@@ -438,7 +437,7 @@ f012 =                  puts		equ	putsil
 02bf : 6c7600           		jmp	(dpl)	;go to handler
                         ;
                         ;=====================================================
-                        ; This is the IL jump table.  The IL opcode is 
+                        ; This is the IL jump table.  The IL opcode is
                         ; mulitplied by two, then looked-up in this table.
                         ; There is absolutely nothing special about the order
                         ; of entries here... they all decode at exactly the
@@ -491,7 +490,7 @@ f012 =                  puts		equ	putsil
 0314 : ca0b             		dw	iDCLOSE	;41
 0316 : 8a0b             		dw	iDGETLINE	;Life, universe, everything
 0318 : c40b             		dw	iDLIST	;43
-                        
+
 031a =                  ILTBLend	equ	*
                         ;
                         ;=====================================================
@@ -501,7 +500,7 @@ f012 =                  puts		equ	putsil
                         ;=====================================================
                         ;=====================================================
                         ;=====================================================
-                        ; 
+                        ;
                         ;
 031a : a900             iINIT		lda	#0	;clear IL stack pointer
 031c : 8d0b0e           		sta	retStackPtr
@@ -524,7 +523,7 @@ f012 =                  puts		equ	putsil
                         ;
                         ;=====================================================
                         ; This initializes for the start of the next line of
-                        ; BASIC text. 
+                        ; BASIC text.
                         ;
 032d : a900             iXINIT		lda	#0
 032f : 8dfa0d           		sta	mathStackPtr	;clear math stack
@@ -578,7 +577,7 @@ f012 =                  puts		equ	putsil
                         ;
                         ;=====================================================
                         ; Pop the top off the stack and print it as a signed
-                        ; decimal number. 
+                        ; decimal number.
                         ;
 036b : 204e0a           iPRN		jsr	popR0
 036e : 20c108           		jsr	PrintDecimal
@@ -640,7 +639,7 @@ f012 =                  puts		equ	putsil
 03a5 : 847f             		sty	CUROFF
 03a7 : a9ff             		lda	#$ff
 03a9 : 8584             		sta	RunMode
-                        
+
                         ;
                         ; Transfer IL to STMT.  I don't like having this
                         ; hard-coded; fix it.
@@ -652,7 +651,7 @@ f012 =                  puts		equ	putsil
 ---------------------------------- mytb.asm ----------------------------------
 
 03b1 : 8575             		sta	ILPC+1
-                        
+
 03b3 : 4c7202           		jmp	NextIL
                         ;
                         ; If both Z and C are cleared then there is no
@@ -785,7 +784,7 @@ f012 =                  puts		equ	putsil
 041b : 4ca303           		jmp	iXFER2
                         ;
                         ;=====================================================
-                        ; Get a line of text from the user, convert to a 
+                        ; Get a line of text from the user, convert to a
                         ; number, leave on top of stack.
                         ;
 041e : a57f             iINNUM		lda	CUROFF	;save state before GetLine
@@ -985,9 +984,9 @@ f012 =                  puts		equ	putsil
 052a : 8d730e           		sta	MQ
 052d : 8d740e           		sta	MQ+1
 0530 : a210             		ldx	#16	;repeat for each bit: ...
-                        
+
 0532 : 0680             divloop		asl	R0	;dividend lb & hb*2, msb -> Carry
-0534 : 2681             		rol	R0+1	
+0534 : 2681             		rol	R0+1
 0536 : 2e730e           		rol 	MQ	;remainder lb & hb * 2 + msb from carry
 0539 : 2e740e           		rol	MQ+1
 053c : ad730e           		lda	MQ
@@ -997,14 +996,14 @@ f012 =                  puts		equ	putsil
 0543 : ad740e           		lda	MQ+1
 0546 : e583             		sbc	R1+1
 0548 : 9008             		bcc	skip	;if carry=0 then divisor didn't fit in yet
-                        
+
 054a : 8d740e           		sta	MQ+1	;else save substraction result as new remai
-054d : 8c730e           		sty	MQ	
-0550 : e680             		inc	R0	;and INCrement result cause divisor fit in 1 
-                        
+054d : 8c730e           		sty	MQ
+0550 : e680             		inc	R0	;and INCrement result cause divisor fit in 1
+
 0552 : ca               skip		dex
 0553 : d0dd             		bne	divloop
-0555 : 20c40a           		jsr	RestoreSigns	
+0555 : 20c40a           		jsr	RestoreSigns
 0558 : 4c1305           		jmp	pushR0nextIl
                         ;
                         ; Indicate divide-by-zero error
@@ -1254,7 +1253,7 @@ f012 =                  puts		equ	putsil
                         ;
                         ;=====================================================
                         ; Pops the top value of the ILPC stack and stores it
-                        ; in ILPC.  Ie, return from an IL subroutine. 
+                        ; in ILPC.  Ie, return from an IL subroutine.
                         ;
 069c : 205408           iRTN		jsr	popILPC
 069f : 4c7202           		jmp	NextIL
@@ -1304,7 +1303,7 @@ f012 =                  puts		equ	putsil
                         ;
                         ;=====================================================
                         ; Set the address of the error handler.  After any
-                        ; error, set to the ILPC to the specified location. 
+                        ; error, set to the ILPC to the specified location.
                         ;
 06d0 : 202008           iERRGOTO	jsr	getILWord
 06d3 : 8e710e           		stx	errGoto
@@ -1488,7 +1487,7 @@ f012 =                  puts		equ	putsil
 07b9 : ad780e           		lda	random+1
 07bc : 6936             		adc	#$36
 07be : 8d780e           		sta	random+1
-                        
+
 07c1 : ad770e           		lda	random
 07c4 : 8580             		sta	R0
 07c6 : ad780e           		lda	random+1
@@ -1742,7 +1741,7 @@ f012 =                  puts		equ	putsil
 08ba : 857d             		sta	CURPTR
 08bc : 9002             		bcc	FindNext4	;exit
 08be : e67e             		inc	CURPTR+1
-08c0 : 60               FindNext4	rts		
+08c0 : 60               FindNext4	rts
                         ;
                         ;=====================================================
                         ; Print the contents of R0 as a signed decimal number.
@@ -1931,14 +1930,14 @@ f012 =                  puts		equ	putsil
 0991 : e680             		inc	R0
 0993 : d002             		bne	getDone2
 0995 : e681             		inc	R0+1
-0997 :                  getDone2	
+0997 :                  getDone2
 0997 : a580             	lda R0
 0999 : 8510             	sta $0010
 099b : a581             	lda R0+1
 099d : 8511             	sta $0011
 099f : a576             	lda dpl
 09a1 : 8512             	sta $012
-                        
+
 09a3 : 60               		rts
                         ;
                         ;=====================================================
@@ -1967,9 +1966,9 @@ f012 =                  puts		equ	putsil
                         		inc	dpl	;update the pointer
                         		bne	psinc	;if not, we're pntng to next char
                         		inc	dpl+1	;account for page crossing
-                        psinc		ora	#0	;Set flags according to contents of 
+                        psinc		ora	#0	;Set flags according to contents of
                                      			;   Accumulator
-                        		beq	psix1	;don't print the final NULL 
+                        		beq	psix1	;don't print the final NULL
                         		jsr	OUTCH	;write it out
                         		jmp	psinb	;back around
                         psix1		inc	dpl
@@ -2366,8 +2365,7 @@ f012 =                  puts		equ	putsil
                         ; Jump to the output function in BOutVec
                         ;
 0b3a : 6c790e           VOUTCH		jmp	(BOutVec)
-                        
-                        
+
                         		include	"storage.asm"
                         ;
                         ;=====================================================
@@ -2380,12 +2378,12 @@ f012 =                  puts		equ	putsil
                         ;=====================================================
                         ;=====================================================
                         ;=====================================================
-                        
+
                         		bss
 df8e =                  diskBufLength	ds	1
 df8f =                  diskBufOffset	ds	1
                         		code
-                        
+
                         ;
                         ;=====================================================
                         ; Open a file for reading as a program.  The next
@@ -2581,7 +2579,7 @@ df8f =                  diskBufOffset	ds	1
 0c09 : 60               		rts
                         ;
                         ;=====================================================
-                        
+
 0c0a : 8d0adf           DOUT		sta	buffer
 0c0d : a901             		lda	#1
 0c0f : a00a             		ldy	#buffer&$ff
@@ -2592,12 +2590,10 @@ df8f =                  diskBufOffset	ds	1
                         ;
 0c16 : 60               		rts
                         	endif
-                        
-                        
-                        
+
                         		include	"IL.inc"
                         		nolist
-                        
+
 AS65 Assembler for R6502 [1.42].                                     Page   41
 ---------------------------------- mytb.asm ----------------------------------
 
@@ -2617,23 +2613,23 @@ df8f =                  diskBufOffset	ds	1
                         ; lines.
                         ;
 0c17 =                  IL		equ	*
-                        
+
                         ;THE IL CONTROL SECTION
-                        
+
 0c17 :                  START:
                         	INIT		;INITIALIZE
 0c17 : 16              >		db	22
-                        
+
                         	NLINE		;WRITE CRLF
 0c18 : 05              >		db	5
-                        
+
                         	ERRGOTO CO	;where to go after an error
 0c19 : 1f              >		db	31
-0c1a : 1d0c            >		dw	CO	
-                        
+0c1a : 1d0c            >		dw	CO
+
                         	VINIT		;clear all variables
 0c1c : 1e              >		db	30
-                        
+
                         ;
                         ; This is where we jump to get a line of commands or
                         ; a program from the user.
@@ -2641,25 +2637,24 @@ df8f =                  diskBufOffset	ds	1
 0c1d :                  CO:
                         	GETLINE		;WRITE PROMPT AND GET LINE
 0c1d : 17              >		db	23
-                        
+
                         	TSTL	XEC	;TEST FOR LINE NUMBER
 0c1e : 22              >		db	34
 0c1f : 04              >		db	(XEC	-*)-1
-                        
+
                         	INSERT		;INSERT IT (MAY BE DELETE)
 0c20 : 18              >		db	24
-                        
+
                         	JMP	CO
 0c21 : 1d              >		db	29
 0c22 : 1d0c            >		dw	CO
-                        
+
 0c24 :                  XEC:
                         	XINIT		;INITIALIZE
 0c24 : 00              >		db	0
-                        
-                        
+
                         ;STATEMENT EXECUTOR
-                        
+
 0c25 :                  STMT:
                         	TST	S1,"LET"	;IS STATEMENT A LET
 0c25 : 20              >		db	32
@@ -2668,105 +2663,105 @@ df8f =                  diskBufOffset	ds	1
 
 0c26 : 15              >		db	(S1-*)-1
 0c27 : 4c455400        >		db	"LET"	,0
-                        
+
                         	TSTV	ERRVEC	;YES, PLACE VAR ADDRESS ON AESTK
 0c2b : 21              >		db	33
 0c2c : 4e              >		db	(ERRVEC	-*)-1
-                        
+
                         	TST	ERRVEC,"="	;(This line originally omitted)
 0c2d : 20              >		db	32
 0c2e : 4c              >		db	(ERRVEC-*)-1
 0c2f : 3d00            >		db	"="	,0
-                        
+
                         	CALL	EXPR	;PLACE EXPR VALUE ON AESTK
 0c31 : 1c              >		db	28
-0c32 : 2c0d            >		dw	EXPR	
-                        
+0c32 : 2c0d            >		dw	EXPR
+
                         	DONE		;REPORT ERROR IF NOT NEXT
 0c34 : 01              >		db	1
-                        
+
                         	STORE		;STORE RESULT
 0c35 : 13              >		db	19
-                        
+
                         	NXT	CO	;AND SEQUENCE TO NEXT
 0c36 : 06              >		db	6
-0c37 : 1d0c            >		dw	CO	
-                        
+0c37 : 1d0c            >		dw	CO
+
                         	JMP	STMT
 0c39 : 1d              >		db	29
 0c3a : 250c            >		dw	STMT
-                        
+
 0c3c :                  S1:
                         	TST	S3,"GO"	;GOTO OT GOSUB?
 0c3c : 20              >		db	32
 0c3d : 19              >		db	(S3-*)-1
 0c3e : 474f00          >		db	"GO"	,0
-                        
+
                         	TST	S2,"TO"	;YES...TO, OR...SUB
 0c41 : 20              >		db	32
 0c42 : 08              >		db	(S2-*)-1
 0c43 : 544f00          >		db	"TO"	,0
-                        
+
                         	CALL	EXPR	;GET LABEL
 0c46 : 1c              >		db	28
-0c47 : 2c0d            >		dw	EXPR	
-                        
+0c47 : 2c0d            >		dw	EXPR
+
                         	DONE		;ERROR IF CR NOT NEXT
 0c49 : 01              >		db	1
-                        
+
                         	XFER		;SET UP AND JUMP
 0c4a : 07              >		db	7
-                        
+
 0c4b :                  S2:
                         	TST	ERRVEC,"SUB"	;ERROR IF NO MATCH
 0c4b : 20              >		db	32
 0c4c : 2e              >		db	(ERRVEC-*)-1
 0c4d : 53554200        >		db	"SUB"	,0
-                        
+
                         	CALL	EXPR	;GET DESTINATION
 0c51 : 1c              >		db	28
-0c52 : 2c0d            >		dw	EXPR	
-                        
+0c52 : 2c0d            >		dw	EXPR
+
                         	DONE		;ERROR IF CR NOT NEXT
 AS65 Assembler for R6502 [1.42].                                     Page   43
 ---------------------------------- mytb.asm ----------------------------------
 
 0c54 : 01              >		db	1
-                        
+
                         	SAV		;SAVE RETURN LINE
 0c55 : 08              >		db	8
-                        
+
                         	XFER		;AND JUMP
 0c56 : 07              >		db	7
-                        
+
 0c57 :                  S3:
                         	TST	S8,"PRINT"	;PRINT
 0c57 : 20              >		db	32
 0c58 : 2c              >		db	(S8-*)-1
 0c59 : 5052494e5400    >		db	"PRINT"	,0
-                        
+
 0c5f :                  S4:
                         	TST	S7,QUOTE	;TEST FOR QUOTE
 0c5f : 20              >		db	32
 0c60 : 1d              >		db	(S7-*)-1
 0c61 : 2200            >		db	QUOTE	,0
-                        
+
                         	PRS		;PRINT STRING
 0c63 : 02              >		db	2
-                        
+
 0c64 :                  S5:
                         	TST	S6A,COMMA	;IS THERE MORE?
 0c64 : 20              >		db	32
 0c65 : 06              >		db	(S6A-*)-1
 0c66 : 2c00            >		db	COMMA	,0
-                        
+
                         	SPC		;SPACE TO NEXT ZONE
 0c68 : 04              >		db	4
-                        
+
                         	JMP	S4	;YES JUMP BACK
 0c69 : 1d              >		db	29
-0c6a : 5f0c            >		dw	S4	
-                        
+0c6a : 5f0c            >		dw	S4
+
                         ;
                         ; If a semicolon, don't do anything.
                         ;
@@ -2775,29 +2770,29 @@ df8f =                  diskBufOffset	ds	1
 0c6c : 20              >		db	32
 0c6d : 05              >		db	(S6-*)-1
 0c6e : 3b00            >		db	SEMICOLON,0
-                        
+
                         	JMP	S4
 0c70 : 1d              >		db	29
 0c71 : 5f0c            >		dw	S4
-                        
+
 0c73 :                  S6:
                         	DONE		;ERROR IF CR NOT NEXT
 0c73 : 01              >		db	1
-                        
+
                         	NLINE
 0c74 : 05              >		db	5
-                        
+
                         	NXT	CO
 0c75 : 06              >		db	6
 0c76 : 1d0c            >		dw	CO
-                        
+
                         	JMP	STMT
 0c78 : 1d              >		db	29
 AS65 Assembler for R6502 [1.42].                                     Page   44
 ---------------------------------- mytb.asm ----------------------------------
 
 0c79 : 250c            >		dw	STMT
-                        
+
                         ;
                         ; A jump for code too far away for relative branch
                         ;
@@ -2805,121 +2800,120 @@ df8f =                  diskBufOffset	ds	1
                         	JMP	UNKNOWN
 0c7b : 1d              >		db	29
 0c7c : 290d            >		dw	UNKNOWN
-                        
+
                         ;
 0c7e :                  S7:
                         	CALL	EXPR
 0c7e : 1c              >		db	28
 0c7f : 2c0d            >		dw	EXPR
-                        
+
                         	PRN		;PRINT IT
 0c81 : 03              >		db	3
-                        
+
                         	JMP	S5	;IS THERE MORE?
 0c82 : 1d              >		db	29
-0c83 : 640c            >		dw	S5	
-                        
+0c83 : 640c            >		dw	S5
+
 0c85 :                  S8:
                         	TST	S9,"IF"	;IF STATEMENT
 0c85 : 20              >		db	32
 0c86 : 17              >		db	(S9-*)-1
 0c87 : 494600          >		db	"IF"	,0
-                        
+
                         	CALL	EXPR	;GET EXPRESSION
 0c8a : 1c              >		db	28
-0c8b : 2c0d            >		dw	EXPR	
-                        
+0c8b : 2c0d            >		dw	EXPR
+
                         	CALL	RELOP	;DETERMINE OPR AND PUT ON STK
 0c8d : 1c              >		db	28
-0c8e : b20d            >		dw	RELOP	
-                        
+0c8e : b20d            >		dw	RELOP
+
                         	CALL	EXPR	;GET EXPRESSION
 0c90 : 1c              >		db	28
-0c91 : 2c0d            >		dw	EXPR	
-                        
+0c91 : 2c0d            >		dw	EXPR
+
                         	TST	UNKNOWN,"THEN"	;(This line originally omitted)
 0c93 : 20              >		db	32
 0c94 : 94              >		db	(UNKNOWN-*)-1
 0c95 : 5448454e00      >		db	"THEN"	,0
-                        
+
                         	CMPR		;PERFORM COMPARISON -- PERFORMS NXT IF FALSE
 0c9a : 0a              >		db	10
-                        
+
                         	JMP	STMT
 0c9b : 1d              >		db	29
 0c9c : 250c            >		dw	STMT
-                        
+
 0c9e :                  S9:
                         	TST	S12,"INPUT"	;INPUT STATEMENT
 0c9e : 20              >		db	32
 0c9f : 18              >		db	(S12-*)-1
 0ca0 : 494e50555400    >		db	"INPUT"	,0
-                        
+
 0ca6 :                  S10:
-                        	TSTV	UNKNOWN	;GET VAR ADDRESS (Originally CALL VAR = 
+                        	TSTV	UNKNOWN	;GET VAR ADDRESS (Originally CALL VAR =
 0ca6 : 21              >		db	33
 AS65 Assembler for R6502 [1.42].                                     Page   45
 ---------------------------------- mytb.asm ----------------------------------
 
 0ca7 : 81              >		db	(UNKNOWN	-*)-1
-                        
+
                         	INNUM		;MOVE NUMBER FROM TTY TO AESTK
 0ca8 : 0b              >		db	11
-                        
+
                         	STORE		;STORE IT
 0ca9 : 13              >		db	19
-                        
+
                         	TST	S11,COMMA	;IS THERE MORE?
 0caa : 20              >		db	32
 0cab : 05              >		db	(S11-*)-1
 0cac : 2c00            >		db	COMMA	,0
-                        
+
                         	JMP	S10	;YES
 0cae : 1d              >		db	29
-0caf : a60c            >		dw	S10	
-                        
-                        
+0caf : a60c            >		dw	S10
+
 0cb1 :                  S11:
                         	DONE		;MUST BE CR
 0cb1 : 01              >		db	1
-                        
+
                         	NXT	CO	;SEQUENCE TO NEXT
 0cb2 : 06              >		db	6
-0cb3 : 1d0c            >		dw	CO	
-                        
+0cb3 : 1d0c            >		dw	CO
+
                         	JMP	STMT
 0cb5 : 1d              >		db	29
 0cb6 : 250c            >		dw	STMT
-                        
+
 0cb8 :                  S12:
                         	TST	S13,"RETURN"	;RETURN STATEMENT
 0cb8 : 20              >		db	32
 0cb9 : 0f              >		db	(S13-*)-1
 0cba : 52455455524e00  >		db	"RETURN"	,0
-                        
+
                         	DONE		;MUST BE CR
 0cc1 : 01              >		db	1
-                        
+
                         	RSTR		;RESTORE LINE NUMBER OF CALL
 0cc2 : 09              >		db	9
-                        
+
                         	NXT	CO	;SEQUENCE TO NEXT STATEMENT
 0cc3 : 06              >		db	6
-0cc4 : 1d0c            >		dw	CO	
-                        
+0cc4 : 1d0c            >		dw	CO
+
                         	JMP	STMT
 0cc6 : 1d              >		db	29
 0cc7 : 250c            >		dw	STMT
-                        
+
 0cc9 :                  S13:
                         	TST	S14,"END"
 0cc9 : 20              >		db	32
 0cca : 05              >		db	(S14-*)-1
 0ccb : 454e4400        >		db	"END",0
-                        
+
                         	FIN
 0ccf : 0c              >		db	12
-                        
+
 0cd0 :                  S14:
                         	TST	S15,"LIST"	;LIST COMMAND
 0cd0 : 20              >		db	32
@@ -2928,65 +2922,63 @@ df8f =                  diskBufOffset	ds	1
 
 0cd1 : 0a              >		db	(S15-*)-1
 0cd2 : 4c49535400      >		db	"LIST"	,0
-                        
+
                         	DONE
 0cd7 : 01              >		db	1
-                        
+
                         	LST
 0cd8 : 15              >		db	21
-                        
+
                         	JMP	CO
 0cd9 : 1d              >		db	29
 0cda : 1d0c            >		dw	CO
-                        
+
 0cdc :                  S15:
                         	TST	S16,"RUN"	;RUN COMMAND
 0cdc : 20              >		db	32
 0cdd : 0d              >		db	(S16-*)-1
 0cde : 52554e00        >		db	"RUN"	,0
-                        
+
                         	DONE
 0ce2 : 01              >		db	1
-                        
+
                         	VINIT		;clear variables
 0ce3 : 1e              >		db	30
-                        
+
                         	LIT	1	;GOTO line 1
 0ce4 : 1b              >		db	27
-0ce5 : 0100            >		dw	1	
-                        
+0ce5 : 0100            >		dw	1
+
                         	XFER		;Bob's addition
 0ce7 : 07              >		db	7
-                        
+
                         ; EXIT
                         	JMP	STMT	;and run!
 0ce8 : 1d              >		db	29
-0ce9 : 250c            >		dw	STMT	
-                        
+0ce9 : 250c            >		dw	STMT
+
 0ceb :                  S16:
                         	TST	S17A,"NEW"	;clear program
 0ceb : 20              >		db	32
 0cec : 08              >		db	(S17A-*)-1
 0ced : 4e455700        >		db	"NEW"	,0
-                        
+
                         	DONE
 0cf1 : 01              >		db	1
-                        
+
                         	JMP	START
 0cf2 : 1d              >		db	29
 0cf3 : 170c            >		dw	START
-                        
-                        
+
 0cf5 :                  S17A:
                         	TST	S17,"EXIT"	;allow them to exit BASIC
 0cf5 : 20              >		db	32
 0cf6 : 06              >		db	(S17-*)-1
 0cf7 : 4558495400      >		db	"EXIT"	,0
-                        
+
                         	EXIT
 0cfc : 1a              >		db	26
-                        
-                        
+
 0cfd :                  S17:
 AS65 Assembler for R6502 [1.42].                                     Page   47
 ---------------------------------- mytb.asm ----------------------------------
@@ -2995,15 +2987,15 @@ df8f =                  diskBufOffset	ds	1
 0cfd : 20              >		db	32
 0cfe : 0a              >		db	(S17B-*)-1
 0cff : 52454d00        >		db	"REM"	,0
-                        
+
                         	NXT	CO
 0d03 : 06              >		db	6
 0d04 : 1d0c            >		dw	CO
-                        
+
                         	JMP	STMT
 0d06 : 1d              >		db	29
 0d07 : 250c            >		dw	STMT
-                        
+
                         ;
                         ; Commands related to saving/restoring programs
                         ; to/from mass storage.
@@ -3014,56 +3006,55 @@ df8f =                  diskBufOffset	ds	1
 0d09 : 20              >		db	32
 0d0a : 0b              >		db	(S17C-*)-1
 0d0b : 5341564500      >		db	"SAVE",0
-                        
+
                         	OPENWRITE
 0d10 : 28              >		db	40
-                        
+
                         	DLIST
 0d11 : 2b              >		db	43
-                        
+
                         	DCLOSE
 0d12 : 29              >		db	41
-                        
+
                         	JMP	CO
 0d13 : 1d              >		db	29
 0d14 : 1d0c            >		dw	CO
-                        
-                        
+
 0d16 :                  S17C:
                         	TST	UNKNOWN,"LOAD"
 0d16 : 20              >		db	32
 0d17 : 11              >		db	(UNKNOWN-*)-1
 0d18 : 4c4f414400      >		db	"LOAD",0
-                        
+
                         	OPENREAD
 0d1d : 27              >		db	39
-                        
+
 0d1e :                  S17CLP:
                         	DGETLINE	;get line from file
 0d1e : 2a              >		db	42
-                        
+
                         	TSTL	S17EOL	;no line num means EOL
 0d1f : 22              >		db	34
 0d20 : 04              >		db	(S17EOL	-*)-1
-                        
+
                         	INSERT		;put it into the program
 0d21 : 18              >		db	24
-                        
+
                         	JMP	S17CLP	;keep going
 0d22 : 1d              >		db	29
-0d23 : 1e0d            >		dw	S17CLP	
-                        
+0d23 : 1e0d            >		dw	S17CLP
+
 AS65 Assembler for R6502 [1.42].                                     Page   48
 ---------------------------------- mytb.asm ----------------------------------
 
 0d25 :                  S17EOL
                         	DCLOSE		;close disk file
 0d25 : 29              >		db	41
-                        
+
                         	JMP	CO	;back to start
 0d26 : 1d              >		db	29
-0d27 : 1d0c            >		dw	CO	
-                        
+0d27 : 1d0c            >		dw	CO
+
                         	endif
                         ;
                         ; Else, unknown command.
@@ -3071,131 +3062,125 @@ df8f =                  diskBufOffset	ds	1
 0d29 :                  UNKNOWN:
                         	ERR	ERR_SYNTAX	;SYNTAX ERROR
 0d29 : 0d              >		db	13
-0d2a : 0500            >		dw	ERR_SYNTAX	
-                        
-                        
+0d2a : 0500            >		dw	ERR_SYNTAX
+
                         ;-----------------------------------------------------
 0d2c :                  EXPR:
                         	TST	E0,"-"
 0d2c : 20              >		db	32
 0d2d : 09              >		db	(E0-*)-1
 0d2e : 2d00            >		db	"-",0
-                        
+
                         	CALL	TERM	;TEST FOR UNARY -.
 0d30 : 1c              >		db	28
-0d31 : 550d            >		dw	TERM	
-                        
+0d31 : 550d            >		dw	TERM
+
                         	NEG		;GET VALUE
 0d33 : 10              >		db	16
-                        
+
                         	JMP	E1	;NEGATE IT
 0d34 : 1d              >		db	29
-0d35 : 3e0d            >		dw	E1	
-                        
+0d35 : 3e0d            >		dw	E1
+
 0d37 :                  E0:
                         	TST	E1A,"+"	;LOOK FOR MORE
 0d37 : 20              >		db	32
 0d38 : 02              >		db	(E1A-*)-1
 0d39 : 2b00            >		db	"+"	,0
-                        
+
 0d3b :                  E1A:
                         	CALL	TERM	;TEST FOR UNARY +
 0d3b : 1c              >		db	28
-0d3c : 550d            >		dw	TERM	
-                        
+0d3c : 550d            >		dw	TERM
+
 0d3e :                  E1:
                         	TST	E2,"+"	;LEADING TERM
 0d3e : 20              >		db	32
 0d3f : 09              >		db	(E2-*)-1
 0d40 : 2b00            >		db	"+"	,0
-                        
+
                         	CALL	TERM
 0d42 : 1c              >		db	28
 0d43 : 550d            >		dw	TERM
-                        
+
                         	ADD
 0d45 : 0e              >		db	14
-                        
+
                         	JMP	E1
 0d46 : 1d              >		db	29
 AS65 Assembler for R6502 [1.42].                                     Page   49
 ---------------------------------- mytb.asm ----------------------------------
 
 0d47 : 3e0d            >		dw	E1
-                        
+
 0d49 :                  E2:
                         	TST	E3,"-"	;ANY MORE?
 0d49 : 20              >		db	32
 0d4a : 09              >		db	(E3-*)-1
 0d4b : 2d00            >		db	"-"	,0
-                        
+
                         	CALL	TERM	;DIFFERENCE TERM
 0d4d : 1c              >		db	28
-0d4e : 550d            >		dw	TERM	
-                        
+0d4e : 550d            >		dw	TERM
+
                         	SUB
 0d50 : 0f              >		db	15
-                        
+
                         	JMP	E1
 0d51 : 1d              >		db	29
 0d52 : 3e0d            >		dw	E1
-                        
+
 0d54 :                  E3:
 0d54 :                  T2:
                         	RTN		;ANY MORE?
 0d54 : 19              >		db	25
-                        
+
 0d55 :                  TERM:
                         	CALL	FACT
 0d55 : 1c              >		db	28
 0d56 : 710d            >		dw	FACT
-                        
+
 0d58 :                  T0:
                         	TST	T1,"*"
 0d58 : 20              >		db	32
 0d59 : 09              >		db	(T1-*)-1
 0d5a : 2a00            >		db	"*",0
-                        
+
                         	CALL	FACT	;PRODUCT FACTOR.
 0d5c : 1c              >		db	28
-0d5d : 710d            >		dw	FACT	
-                        
+0d5d : 710d            >		dw	FACT
+
                         	MUL
 0d5f : 11              >		db	17
-                        
+
                         	JMP	T0
 0d60 : 1d              >		db	29
 0d61 : 580d            >		dw	T0
-                        
+
 0d63 :                  T1:
                         	TST	T2,"/"
 0d63 : 20              >		db	32
 0d64 : ef              >		db	(T2-*)-1
 0d65 : 2f00            >		db	"/",0
-                        
+
                         	CALL	FACT	;QUOTIENT FACTOR.
 0d67 : 1c              >		db	28
-0d68 : 710d            >		dw	FACT	
-                        
+0d68 : 710d            >		dw	FACT
+
                         	DIV
 0d6a : 12              >		db	18
-                        
+
                         	JMP	T0
 0d6b : 1d              >		db	29
 0d6c : 580d            >		dw	T0
 AS65 Assembler for R6502 [1.42].                                     Page   50
 ---------------------------------- mytb.asm ----------------------------------
 
-                        
-                        
 0d6e :                  UNKNOWNVEC:
                         	JMP	UNKNOWN
 0d6e : 1d              >		db	29
 0d6f : 290d            >		dw	UNKNOWN
-                        
-                        
-                        
-                        
+
                         ;
                         ; Factor an expression.  Always test for functions
                         ; first or else they'll be confused for variables.
@@ -3205,46 +3190,44 @@ df8f =                  diskBufOffset	ds	1
 0d71 : 20              >		db	32
 0d72 : 09              >		db	(F2A-*)-1
 0d73 : 46524545282900  >		db	"FREE()",0
-                        
+
                         	FREE
 0d7a : 24              >		db	36
-                        
+
                         	RTN
 0d7b : 19              >		db	25
-                        
-                        
+
 0d7c :                  F2A:
                         	TST	F2B,"RND("
 0d7c : 20              >		db	32
 0d7d : 0e              >		db	(F2B-*)-1
 0d7e : 524e442800      >		db	"RND(",0
-                        
+
                         	CALL	FACT	;GET RANGE
 0d83 : 1c              >		db	28
-0d84 : 710d            >		dw	FACT	
-                        
+0d84 : 710d            >		dw	FACT
+
                         	TST	UNKNOWN,")"
 0d86 : 20              >		db	32
 0d87 : a1              >		db	(UNKNOWN-*)-1
 0d88 : 2900            >		db	")",0
-                        
+
                         	RANDOM
 0d8a : 25              >		db	37
-                        
+
                         	RTN
 0d8b : 19              >		db	25
-                        
-                        
+
 0d8c :                  F2B:
                         	TST	F2C,"ABS("
 0d8c : 20              >		db	32
 0d8d : 0e              >		db	(F2C-*)-1
 0d8e : 4142532800      >		db	"ABS(",0
-                        
+
                         	CALL	FACT	;get value
 0d93 : 1c              >		db	28
-0d94 : 710d            >		dw	FACT	
-                        
+0d94 : 710d            >		dw	FACT
+
                         	TST	UNKNOWN,")"
 0d96 : 20              >		db	32
 0d97 : 91              >		db	(UNKNOWN-*)-1
@@ -3252,131 +3235,127 @@ df8f =                  diskBufOffset	ds	1
 ---------------------------------- mytb.asm ----------------------------------
 
 0d98 : 2900            >		db	")",0
-                        
+
                         	ABS
 0d9a : 26              >		db	38
-                        
+
                         	RTN
 0d9b : 19              >		db	25
-                        
-                        
+
 0d9c :                  F2C:
                         	TSTV	F0
 0d9c : 21              >		db	33
 0d9d : 02              >		db	(F0-*)-1
-                        
+
                         	IND		;YES, GET THE VALUE.
 0d9e : 14              >		db	20
-                        
+
                         	RTN
 0d9f : 19              >		db	25
-                        
+
 0da0 :                  F0:
                         	TSTN	F1	;NUMBER, GET ITS VALUE.
 0da0 : 23              >		db	35
 0da1 : 01              >		db	(F1	-*)-1
-                        
+
                         	RTN
 0da2 : 19              >		db	25
-                        
+
 0da3 :                  F1:
                         	TST	F2A,"("	;PARENTHESIZED EXPR.
 0da3 : 20              >		db	32
 0da4 : d7              >		db	(F2A-*)-1
 0da5 : 2800            >		db	"("	,0
-                        
+
                         	CALL	EXPR
 0da7 : 1c              >		db	28
 0da8 : 2c0d            >		dw	EXPR
-                        
+
                         	TST	F2,")"
 0daa : 20              >		db	32
 0dab : 03              >		db	(F2-*)-1
 0dac : 2900            >		db	")",0
-                        
+
                         	RTN
 0dae : 19              >		db	25
-                        
-                        
+
 0daf :                  F2:
                         	ERR	ERR_SYNTAX	;ERROR.
 0daf : 0d              >		db	13
-0db0 : 0500            >		dw	ERR_SYNTAX	
-                        
-                        
+0db0 : 0500            >		dw	ERR_SYNTAX
+
 0db2 :                  RELOP:
                         	TST	iR0,"="
 0db2 : 20              >		db	32
 0db3 : 06              >		db	(iR0-*)-1
 0db4 : 3d00            >		db	"=",0
-                        
+
                         	LIT	2	;=
 0db6 : 1b              >		db	27
-0db7 : 0200            >		dw	2	
+0db7 : 0200            >		dw	2
 AS65 Assembler for R6502 [1.42].                                     Page   52
 ---------------------------------- mytb.asm ----------------------------------
 
-                        
                         	RTN
 0db9 : 19              >		db	25
-                        
+
 0dba :                  iR0:
                         	TST	R4,"<"
 0dba : 20              >		db	32
 0dbb : 16              >		db	(R4-*)-1
 0dbc : 3c00            >		db	"<",0
-                        
+
                         	TST	iR1,"="
 0dbe : 20              >		db	32
 0dbf : 06              >		db	(iR1-*)-1
 0dc0 : 3d00            >		db	"=",0
-                        
+
                         	LIT	3	;<=
 0dc2 : 1b              >		db	27
-0dc3 : 0300            >		dw	3	
-                        
+0dc3 : 0300            >		dw	3
+
                         	RTN
 0dc5 : 19              >		db	25
-                        
+
 0dc6 :                  iR1:
                         	TST	R3,">"
 0dc6 : 20              >		db	32
 0dc7 : 06              >		db	(R3-*)-1
 0dc8 : 3e00            >		db	">",0
-                        
+
                         	LIT	5	;<>
 0dca : 1b              >		db	27
-0dcb : 0500            >		dw	5	
-                        
+0dcb : 0500            >		dw	5
+
                         	RTN
 0dcd : 19              >		db	25
-                        
+
 0dce :                  R3:
                         	LIT	1	;<
 0dce : 1b              >		db	27
-0dcf : 0100            >		dw	1	
-                        
+0dcf : 0100            >		dw	1
+
                         	RTN
 0dd1 : 19              >		db	25
-                        
+
 0dd2 :                  R4:
                         	TST	UNKNOWNVEC,">"
 0dd2 : 20              >		db	32
 0dd3 : 9a              >		db	(UNKNOWNVEC-*)-1
 0dd4 : 3e00            >		db	">",0
-                        
+
                         	TST	R5,"="
 0dd6 : 20              >		db	32
 0dd7 : 06              >		db	(R5-*)-1
 0dd8 : 3d00            >		db	"=",0
-                        
+
                         	LIT	6	;>=
 0dda : 1b              >		db	27
-0ddb : 0600            >		dw	6	
-                        
+0ddb : 0600            >		dw	6
+
                         	RTN
 0ddd : 19              >		db	25
-                        
+
 0dde :                  R5:
 AS65 Assembler for R6502 [1.42].                                     Page   53
 ---------------------------------- mytb.asm ----------------------------------
@@ -3385,27 +3364,26 @@ df8f =                  diskBufOffset	ds	1
 0dde : 20              >		db	32
 0ddf : 06              >		db	(R6-*)-1
 0de0 : 3c00            >		db	"<",0
-                        
+
                         	LIT	1
 0de2 : 1b              >		db	27
 0de3 : 0100            >		dw	1
-                        
+
                         	RTN		;(This line originally omitted)
 0de5 : 19              >		db	25
-                        
+
 0de6 :                  R6:
                         	LIT	4	;>???
 0de6 : 1b              >		db	27
-0de7 : 0400            >		dw	4	
-                        
+0de7 : 0400            >		dw	4
+
                         	RTN
 0de9 : 19              >		db	25
-                        
-                        
+
 0dea =                  ILEND		equ	*
-                        
+
 0dea =                  PROGEND		equ	*
-                        
+
                         ;=====================================================
                         ;=====================================================
                         ;=====================================================
@@ -3466,6 +3444,5 @@ df04 : 0002             		dw	cold
                         	endif
                         ;
                         		end
-                        
-                        
+
 No errors in pass 2.

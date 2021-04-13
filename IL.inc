@@ -191,7 +191,7 @@ RANDOM		macro
 		db	37
 		endm
 ;
-; ABS will replace the top of stack with the 
+; ABS will replace the top of stack with the
 ; absolute value.
 ;
 ABS		macro

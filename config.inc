@@ -47,4 +47,3 @@ SD_ENABLED	equ	TRUE
 ; Size of the keyboard buffer
 ;
 BUFFER_SIZE	equ	132
-

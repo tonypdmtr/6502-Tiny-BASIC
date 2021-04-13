@@ -11,7 +11,7 @@
 ;
 ; 10/07/2017
 ;
-; This implements a stripped down Tiny BASIC 
+; This implements a stripped down Tiny BASIC
 ; interpreter using the Interpretive Language (IL)
 ; method as described in the first few issues of
 ; Dr Dobb's Journal.  The IL interpreter can be used
@@ -196,7 +196,7 @@ cold2		jsr	puts
 		jmp	coldtwo
 ;
 ; This is the warm start entry point
-;	
+;
 warm2		jsr	SetOutConsole
 		jsr	CRLF
 		lda	errGoto
@@ -281,7 +281,7 @@ ILgood		tay		;move index into Y
 		jmp	(dpl)	;go to handler
 ;
 ;=====================================================
-; This is the IL jump table.  The IL opcode is 
+; This is the IL jump table.  The IL opcode is
 ; mulitplied by two, then looked-up in this table.
 ; There is absolutely nothing special about the order
 ; of entries here... they all decode at exactly the
@@ -341,7 +341,7 @@ ILTBLend	equ	*
 ;=====================================================
 ;=====================================================
 ;=====================================================
-; 
+;
 ;
 iINIT		lda	#0	;clear IL stack pointer
 		sta	retStackPtr
@@ -361,7 +361,7 @@ iINIT		lda	#0	;clear IL stack pointer
 ;
 ;=====================================================
 ; This initializes for the start of the next line of
-; BASIC text. 
+; BASIC text.
 ;
 iXINIT		lda	#0
 		sta	mathStackPtr	;clear math stack
@@ -415,7 +415,7 @@ PRSend2		jmp	NextIL
 ;
 ;=====================================================
 ; Pop the top off the stack and print it as a signed
-; decimal number. 
+; decimal number.
 ;
 iPRN		jsr	popR0
 		jsr	PrintDecimal
@@ -610,7 +610,7 @@ iCMPno		jsr	FindNextLine
 		jmp	iXFER2
 ;
 ;=====================================================
-; Get a line of text from the user, convert to a 
+; Get a line of text from the user, convert to a
 ; number, leave on top of stack.
 ;
 iINNUM		lda	CUROFF	;save state before GetLine
@@ -782,7 +782,7 @@ pushR0nextIl	jsr	pushR0	;OP
 ;=====================================================
 ; Divide the top of stack into the next to top item.
 ; Leave results on stack.  Taken from:
-; http://codebase64.org/doku.php?id=base:16bit_division_16-bit_result 
+; http://codebase64.org/doku.php?id=base:16bit_division_16-bit_result
 ;
 ; MQ = R0 / R1
 ; Remainder is in R0
@@ -803,7 +803,7 @@ iDIV		jsr	popR1
 		ldx	#16	;repeat for each bit: ...
 
 divloop		asl	R0	;dividend lb & hb*2, msb -> Carry
-		rol	R0+1	
+		rol	R0+1
 		rol 	MQ	;remainder lb & hb * 2 + msb from carry
 		rol	MQ+1
 		lda	MQ
@@ -815,12 +815,12 @@ divloop		asl	R0	;dividend lb & hb*2, msb -> Carry
 		bcc	skip	;if carry=0 then divisor didn't fit in yet
 
 		sta	MQ+1	;else save substraction result as new remainder,
-		sty	MQ	
+		sty	MQ
 		inc	R0	;and INCrement result cause divisor fit in 1 times
 
 skip		dex
 		bne	divloop
-		jsr	RestoreSigns	
+		jsr	RestoreSigns
 		jmp	pushR0nextIl
 ;
 ; Indicate divide-by-zero error
@@ -1058,7 +1058,7 @@ mvUpFini	jmp	NextIL
 ;
 ;=====================================================
 ; Pops the top value of the ILPC stack and stores it
-; in ILPC.  Ie, return from an IL subroutine. 
+; in ILPC.  Ie, return from an IL subroutine.
 ;
 iRTN		jsr	popILPC
 		jmp	NextIL
@@ -1105,7 +1105,7 @@ Vinit2		sta	variables,x
 ;
 ;=====================================================
 ; Set the address of the error handler.  After any
-; error, set to the ILPC to the specified location. 
+; error, set to the ILPC to the specified location.
 ;
 iERRGOTO	jsr	getILWord
 		stx	errGoto
@@ -1415,4 +1415,3 @@ ProgramStart	equ	*
 	endif
 ;
 		end
-

@@ -177,7 +177,7 @@ FindNext3	iny		;skip null byte
 		sta	CURPTR
 		bcc	FindNext4	;exit
 		inc	CURPTR+1
-FindNext4	rts		
+FindNext4	rts
 ;
 ;=====================================================
 ; Print the contents of R0 as a signed decimal number.
@@ -357,7 +357,7 @@ getDdone	lda	R0
 		inc	R0
 		bne	getDone2
 		inc	R0+1
-getDone2	
+getDone2
 	lda R0
 	sta $0010
 	lda R0+1
@@ -390,9 +390,9 @@ psinb	       	ldy	#1
 		inc	dpl	;update the pointer
 		bne	psinc	;if not, we're pntng to next char
 		inc	dpl+1	;account for page crossing
-psinc		ora	#0	;Set flags according to contents of 
+psinc		ora	#0	;Set flags according to contents of
              			;   Accumulator
-		beq	psix1	;don't print the final NULL 
+		beq	psix1	;don't print the final NULL
 		jsr	OUTCH	;write it out
 		jmp	psinb	;back around
 psix1		inc	dpl
@@ -771,4 +771,3 @@ SetOutConsole	lda	#OUTCH&$ff
 ; Jump to the output function in BOutVec
 ;
 VOUTCH		jmp	(BOutVec)
-

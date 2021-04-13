@@ -207,8 +207,6 @@ T1:
 UNKNOWNVEC:
 	IJMP	UNKNOWN
 
-
-
 ;
 ; Factor an expression.  Always test for functions
 ; first or else they'll be confused for variables.
